@@ -240,26 +240,26 @@
 #let acro(short, pref: false, append: "") = {
 	let item = acronyms.at(short)
 
-	locate(loc => {
-	let entries = acroStates.at(loc).filter(e => e == short);
+	context {
+    let entries = acroStates.at(here()).filter(e => e == short);
 
-	// Already used once
-	if entries.len() > 0 {
-		if pref {
-			link(label(short))[#item#append]
-		} else {
-			link(label(short))[#short#append]
-		}
-	// First usage
-	} else {
-		acroStates.update(e => {e.push(short); e;});
-		if pref {
-			link(label(short))[#item#append (#short)]
-		} else {
-			link(label(short))[#short#append (#item)]
-		}
+    // Already used once
+    if entries.len() > 0 {
+      if pref {
+        link(label(short))[#item#append]
+      } else {
+        link(label(short))[#short#append]
+      }
+    // First usage
+    } else {
+      acroStates.update(e => {e.push(short); e;});
+      if pref {
+        link(label(short))[#item#append (#short)]
+      } else {
+        link(label(short))[#short#append (#item)]
+      }
+    }
 	}
-	});
 }
 
 #let acroOnce(main, inside) = [#main (#inside)]
