@@ -105,9 +105,9 @@
 
   // Configure headings.
   // set heading(numbering: "I.A.a)")
-  show heading: it => locate(loc => {
+  show heading: it => context {
     // Find out the final number of the heading counter.
-    let levels = counter(heading).at(loc)
+    let levels = counter(heading).at(here())
     let deepest = if levels != () {
       levels.last()
     } else {
@@ -149,7 +149,7 @@
       }
       _#(it.body):_
     ]
-  })
+  }
 
   // Display the paper's title.
   v(3pt, weak: true)
@@ -189,8 +189,7 @@
 
   // Start two column mode and configure paragraph properties.
   show: columns.with(2, gutter: 12pt)
-  set par(justify: true, first-line-indent: 0em)
-  show par: set block(spacing: 0.65em)
+  set par(justify: true, first-line-indent: 0em, spacing: 0.65em)
 
   // Display abstract and index terms.
   if abstract != none [
@@ -224,7 +223,8 @@
 		..acroArr,
 	)
 
-  outline(target: figure, title: "List of figures and tables", fill: repeat(" . "))
+  outline(target: figure, title: "List of figures and tables")
+  set outline.entry(fill: repeat(" . "))
 
   // Display bibliography.
   if bibliography != none {
@@ -240,26 +240,26 @@
 #let acro(short, pref: false, append: "") = {
 	let item = acronyms.at(short)
 
-	locate(loc => {
-	let entries = acroStates.at(loc).filter(e => e == short);
+	context {
+    let entries = acroStates.at(here()).filter(e => e == short);
 
-	// Already used once
-	if entries.len() > 0 {
-		if pref {
-			link(label(short))[#item#append]
-		} else {
-			link(label(short))[#short#append]
-		}
-	// First usage
-	} else {
-		acroStates.update(e => {e.push(short); e;});
-		if pref {
-			link(label(short))[#item#append (#short)]
-		} else {
-			link(label(short))[#short#append (#item)]
-		}
+    // Already used once
+    if entries.len() > 0 {
+      if pref {
+        link(label(short))[#item#append]
+      } else {
+        link(label(short))[#short#append]
+      }
+    // First usage
+    } else {
+      acroStates.update(e => {e.push(short); e;});
+      if pref {
+        link(label(short))[#item#append (#short)]
+      } else {
+        link(label(short))[#short#append (#item)]
+      }
+    }
 	}
-	});
 }
 
 #let acroOnce(main, inside) = [#main (#inside)]
